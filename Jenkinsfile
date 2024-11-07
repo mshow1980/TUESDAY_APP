@@ -10,7 +10,7 @@ pipeline {
        APP_NAME = 'tuesday_app'
        IMAGE_NAME = "${DOCKER_USER}"+"/"+"${APP_NAME}"
        APP_VERSION = '1.5'
-       IMAGE_TAG = "${APP_VERSION}-${BUILD_NUMER}"
+       IMAGE_TAG = "${APP_VERSION}-${BUILD_NUMBER}"
        REGISTRY_CRED = 'docker-login'
     }
     stages {
