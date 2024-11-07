@@ -103,11 +103,12 @@ pipeline {
             steps{
                 script{
                     checkout scmGit(branches: [[name: '*/main']], extensions: [], 
-                    userRemoteConfigs: [[url: 'https://github.com/mshow1980/CD_PROJECT_ARGOCD.git']])
+                    userRemoteConfigs: [[credentialsId: 'Git-Token', 
+                    url: 'https://github.com/mshow1980/CD_PROJECT_ARGOCD.git']])
                     sh """
                         cat manifest.yaml
                         sed -i 's/${APP_NAME}.*/${APP_NAME}:${IMAGE_TAG}/g' manifest.yaml
-                        cat cat manifest.yaml
+                        cat  manifest.yaml
                     """   
                 }
             }
@@ -115,9 +116,6 @@ pipeline {
         stage('Updating Deployment File'){
             steps{
                 script{
-                    checkout scmGit(branches: [[name: '*/main']], extensions: [], 
-                    userRemoteConfigs: [[credentialsId: 'Git-Token', 
-                    url: 'https://github.com/mshow1980/CD_PROJECT_ARGOCD.git']])
                     sh '''
                         git config --global user.name "SCION_SCOPE"
                         git config --global user.email "mshow1980@aol.com"
