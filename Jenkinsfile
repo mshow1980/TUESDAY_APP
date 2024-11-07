@@ -107,8 +107,8 @@ pipeline {
                     url: 'https://github.com/mshow1980/CD_PROJECT_ARGOCD.git']])
                     sh """
                         cat manifest.yaml
-                        sed -i 's/${APP_NAME}.*/${APP_NAME}:${IMAGE_TAG}/g' manifest.yaml
-                        cat  manifest.yaml
+                        sed -i 's/${DOCKER_USER}.*/${APP_NAME}:${IMAGE_TAG}/g' manifest.yaml
+                        cat manifest.yaml
                     """   
                 }
             }
@@ -121,8 +121,11 @@ pipeline {
                         git config --global user.email "mshow1980@aol.com"
                         git add manifest.yaml
                         git commit -m 'Updating Manifest file'
-                        git push https://github.com/mshow1980/CD_PROJECT_ARGOCD.git main
-                    '''
+                        '''
+                        withCredentials([gitUsernamePassword(credentialsId: 'docker-login', gitToolName: 'Default')]) {
+                            sh 'git push https://github.com/mshow1980/CD_PROJECT_ARGOCD.git main'
+                        }
+
                     sh ' echo "Done!!" '
                 }
             }
