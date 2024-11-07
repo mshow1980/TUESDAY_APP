@@ -93,9 +93,20 @@ pipeline {
             steps{
                 script{
                     withDockerRegistry(credentialsId: 'docker-login') {
-                        docker_image.push("${IMAGE_NAME}")
+                        docker_image.push("${IMAGE_TAG}")
                         docker_image.push('latet')
                     }
+                }
+            }
+        }
+        stage('Publishing-To-Nexus'){
+            steps{
+                script{
+                    nexusArtifactUploader credentialsId: 'Nexus-Token', groupId: '1.5', 
+                    nexusUrl: 'http://54.162.79.226:8081/repository/node-releases/', 
+                    nexusVersion: 'nexus3', protocol: 'http', repository: 'node-releases', 
+                    version: '1.5'
+                    sh " npm publish"
                 }
             }
         }    
