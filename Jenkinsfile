@@ -72,6 +72,32 @@ pipeline {
                     sh ' npm install'
                 }
             }
+        }
+        stage('BUILDING-IMAGE'){
+            steps{
+                script{
+                    withDockerRegistry(credentialsId: 'docker-login') {
+                        docker_image = docker.build"${IMAGE_NAME}"
+                    }
+                }
+            }
+        }
+        stage('Image-Scan'){
+            steps{
+                script{
+                    sh 'trivy image --scanners vuln --scanners misconfig "${IMAGE_NAME}" --no-progress --scanners vuln  --exit-code 0 --severity HIGH,CRITICAL --format table -o trvy-image.html '
+                }
+            }
+        }
+        stage('Image-Tag'){
+            steps{
+                script{
+                    withDockerRegistry(credentialsId: 'docker-login') {
+                        docker_image.push("${IMAGE_NAME}")
+                        docker_image.push('latet')
+                    }
+                }
+            }
         }    
     }
 }
