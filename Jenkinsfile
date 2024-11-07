@@ -107,7 +107,7 @@ pipeline {
                     url: 'https://github.com/mshow1980/CD_PROJECT_ARGOCD.git']])
                     sh """
                         cat manifest.yaml
-                        sed -i 's/${DOCKER_USER}.*/${IMAGE_NAME}:${IMAGE_TAG}/g' manifest.yaml
+                        sed -i 's/.*/${IMAGE_NAME}:${IMAGE_TAG}/g' manifest.yaml
                         cat manifest.yaml
                     """   
                 }
