@@ -99,14 +99,33 @@ pipeline {
                 }
             }
         }
-        stage('Publishing-To-Nexus'){
+        stage('Checkout- To Deployment Branch'){
             steps{
                 script{
-                    nexusArtifactUploader credentialsId: 'Nexus-Token', groupId: '1.5', 
-                    nexusUrl: 'http://54.162.79.226:8081/repository/node-releases/', 
-                    nexusVersion: 'nexus3', protocol: 'http', repository: 'node-releases', 
-                    version: '1.5'
-                    sh " npm publish"
+                    checkout scmGit(branches: [[name: '*/main']], extensions: [], 
+                    userRemoteConfigs: [[url: 'https://github.com/mshow1980/CD_PROJECT_ARGOCD.git']])
+                    sh """
+                        cat manifest.yaml
+                        sed -i 's/${APP_NAME}.*/${APP_NAME}:${IMAGE_TAG}/g' manifest.yaml
+                        cat cat manifest.yaml
+                    """   
+                }
+            }
+        }
+        stage('Updating Deployment File'){
+            steps{
+                script{
+                    checkout scmGit(branches: [[name: '*/main']], extensions: [], 
+                    userRemoteConfigs: [[credentialsId: 'Git-Token', 
+                    url: 'https://github.com/mshow1980/CD_PROJECT_ARGOCD.git']])
+                    sh '''
+                        git config --global user.name "SCION_SCOPE"
+                        git config --global user.email "mshow1980@aol.com"
+                        git add manifest.yaml
+                        git commit -m 'Updating Manifest file'
+                        git push https://github.com/mshow1980/CD_PROJECT_ARGOCD.git main
+                    '''
+                    sh ' echo "Done!!" '
                 }
             }
         }    
